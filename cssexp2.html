@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Recap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: rgb(233, 208, 192);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 95vh;
+        }
+
+        .head {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background: rgb(177, 86, 25);
+            border-radius: 70% 70% 54% 54%;
+            box-shadow: inset 0 0 30px rgb(54, 36, 6);
+        }
+        .mainbody{
+            position: relative;
+            z-index: 1;
+  width: 200px;
+  aspect-ratio: 2/3;
+  clip-path: ellipse(50% 85%);
+  background: #862a09;
+}
+
+        .hair {
+            position: relative;
+            width: 30px;
+            height: 10px;
+            background: rgb(224, 111, 153);
+            top: 10px;
+            right: 20px;
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+
+        .eye-left, .eye-right {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgb(0, 0, 0);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .eye-left {
+            left: 50px;
+            top: 125px;
+        }
+
+        .eye-right {
+            right: 50px;
+            top: 125px;
+        }
+
+        .iris-left, .iris-right {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: black;
+            border-radius: 50%;
+            top:15px
+            right:15px
+        }
+
+        .iris-left {
+            top: 15px;
+            left: 15px;
+        }
+
+        .iris-right {
+            top: 15px;
+            right: 15px;
+        }
+
+        .neck {
+            position: absolute;
+            width: 50px;
+            height: 75px;
+            background: rgb(177, 86, 25);
+            border-radius: 20%;
+        
+            top: 290px;
+            left: 130px;
+            box-shadow: inset 0 0 30px rgb(98, 32, 10)
+           
+
+        }
+
+  
+        .hairstrokes {
+            position: absolute; 
+            width: 5px;
+            height: 90px;
+            background: pink;
+          
+            top: 0px; 
+            left: 50px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin1 {
+            position: absolute; 
+            width: 5px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 40px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin2 {
+            position: absolute; 
+            width: 5px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 60px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin3 {
+            position: absolute; 
+            width: 5px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 77px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin4 {
+            position: absolute; 
+            width: 5px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 30px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin5 {
+            position: absolute; 
+            width: 5px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 175px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin6 {
+            position: absolute; 
+            width: 5px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 200px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin7 {
+            position: absolute; 
+            width: 15px;
+            height: 280px;
+            background: pink;
+            top: 15px; 
+            left: 275px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin8 {
+            position: absolute; 
+            width: 15px;
+            height: 280px;
+            background: pink;
+            top: 15px; 
+            left: 5px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin9 {
+            position: absolute; 
+            width: 15px;
+            height: 280px;
+            background: pink;
+            top: 15px; 
+            left: 15px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin10 {
+            position: absolute; 
+            width: 15px;
+            height: 280px;
+            background: pink;
+            top: 15px; 
+            left: 15px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-thin11 {
+            position: absolute; 
+            width: 15px;
+            height: 280px;
+            background: pink;
+            top: 15px; 
+            left: 15px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke {
+            position: absolute; 
+            width: 25px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 99px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-2 {
+            position: absolute; 
+            width: 25px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 99px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-3 {
+            position: absolute; 
+            width: 25px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 200px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-4 {
+            position: absolute; 
+            width: 25px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 133px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-5 {
+            position: absolute; 
+            width: 25px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 169px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-6 {
+            position: absolute; 
+            width: 25px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 245px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-7 {
+            position: absolute; 
+            width: 25px;
+            height: 100px;
+            background: pink;
+            top: 0px; 
+            left: 13px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+        }
+        .hairstroke-7 {
+            position: absolute; 
+            z-index: -1;
+            width: 100px;
+            height: 375px;
+            background: pink;
+            top: -15px; 
+            left:50px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+            
+            
+        }
+        .hairstroke-8 {
+            position: absolute; 
+            z-index: -1;
+            width: 100px;
+            height: 375px;
+            background: pink;
+            top: -15px; 
+            left:165px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-9 {
+            position: absolute; 
+            z-index: -1;
+            width: 100px;
+            height: 500px;
+            background: pink;
+            top: 1px; 
+            left:200px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-10 {
+            position: absolute; 
+            z-index: -1;
+            width: 100px;
+            height: 500px;
+            background: pink;
+            top: 1px; 
+            left:20px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-11 {
+            position: absolute; 
+            z-index: 1;
+            width: 50px;
+            height: 200px;
+            background: pink;
+            top: 60px; 
+            left:-19px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-12 {
+            position: absolute; 
+            z-index: 1;
+            width: 50px;
+            height: 200px;
+            background: pink;
+            top: 60px; 
+            left:275px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke-13 {
+            position: absolute; 
+            z-index: 4;
+            width: 280px;
+            height: 50px;
+            background: pink;
+            top: 2px; 
+            left:2px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+        .hairstroke2 {
+            position: absolute; 
+            width: 25px;
+            height: 90px;
+            background: pink;
+            top: 0px; 
+            left: 110px; 
+            box-shadow: inset 0 0 30px rgb(224, 111, 153)
+        }
+
+        .bow{
+            position: absolute; 
+            z-index: 10;
+            width: 25px;
+            height: 25px;
+            background: rgb(255, 240, 243);
+            border-radius: 50%;
+            top: 20px; 
+            left: 250px; 
+            box-shadow: inset 0 0 30px rgb(158, 146, 150) 
+            
+        }
+        @keyframes embarrassed {
+            0% {transform: rotate(0deg);}
+            50% {transform: rotate(10deg);}
+            100% {transform: rotate(0deg);}
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <div class="mainbody>"></div>
+        <div class="hairstrokes"></div>
+ 
+        <div class="hairstroke"></div>
+        <div class="hairstroke-2"></div>
+        <div class="hairstroke-3"></div>
+        <div class="hairstroke-4"></div>
+        <div class="hairstroke-5"></div>
+        <div class="hairstroke-6"></div>
+        <div class="hairstroke-7"></div>
+        <div class="hairstroke-8"></div>
+        <div class="hairstroke-9"></div>
+        <div class="hairstroke-10"></div>
+        <div class="hairstroke-11"></div>
+        <div class="hairstroke-12"></div>
+        <div class="hairstroke-13"></div>
+        <div class="hairstroke-14"></div>
+
+
+
+
+
+
+        <div class="hairstroke-thin1"></div>
+        <div class="hairstroke-thin2"></div>
+        <div class="hairstroke-thin3"></div>
+        <div class="hairstroke-thin4"></div>
+        <div class="hairstroke-thin5"></div>
+        <div class="hairstroke-thin6"></div>
+        <div class="hairstroke-thin7"></div>
+        <div class="hairstroke-thin8"></div>
+        <div class="hairstroke-thin9"></div>
+        <div class="hairstroke-thin10"></div>
+        
+        <div class="bow"></div>
+        <div class="eye-left">
+            <div class="iris-left"></div>
+        </div>
+      
+        <div class="eye-right">
+            <div class="iris-right"></div>
+        </div>
+        
+        <div class="neck"></div>
+    </div>
+</body>
+</html>
+
+       
+        <div class="hairstrokes"></div>
+        
+        <div class="eye-left">
+            <div class="iris-left"></div>
+        </div>
+  
+        <div class="eye-right">
+            <div class="iris-right"></div>
+        </div>
+
+        <div class="mouth"></div>
+    </div>
+</body>
+</html>
