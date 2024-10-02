@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Move Button with Text</title>
+    <style>
+        body {
+            height: 100vh;
+            position: relative;
+            overflow: hidden; /* Prevents scrollbars from appearing */
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s; /* Smooth transition for background color */
+        }
+
+        #videoBackground {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0; /* Set width to 0 */
+            height: 0; /* Set height to 0 */
+            z-index: -1; /* Places video behind other elements */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            color: pink;
+            background-color: rgb(105, 87, 186);
+            position: absolute; /* Allows the button to move freely */
+        }
+
+        .random-text {
+            position: absolute;
+            font-size: 18px;
+            color: #333;
+            white-space: nowrap; /* Prevents text from wrapping */
+        }
+
+        #clickCount {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #333;
+            background: rgba(93, 48, 170, 0.8); /* Light background for readability */
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #message {
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            font-size: 20px;
+            color: hsl(312, 43%, 69%); /* Color for the message */
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px;
+            border-radius: 5px;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <iframe id="videoBackground" src="https://www.youtube.com/embed/leEQ3nz8O-I?autoplay=1&controls=0&loop=1&playlist=leEQ3nz8O-I" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+    <div id="clickCount">Clicks: 0</div>
+    <div id="message"></div> <!-- Message display area -->
+    <button id="movableButton">𝒸𝓁𝒾𝒸𝓀 𝓂𝑒 𝓉𝑜 𝒻𝒾𝓃𝒹 𝓉𝒽𝑒 𝓃𝑒𝓍𝓉 𝒷𝓊𝓉𝓉𝑜𝓃</button>
+
+    <script>
+        const button = document.getElementById('movableButton');
+        const clickCountDisplay = document.getElementById('clickCount');
+        const messageDisplay = document.getElementById('message');
+        const texts = [
+            "omg! i've been spotted...",
+            "you found me :D",
+            "click again! (if you dare...)",
+            "weeeeeeeeeeeeee!!!!!",
+            "tag! you're it",
+            "you're doing amazing sweetie",
+            "aren't you having so much fun?",
+            "this kinda feels like cookie clicker all over again...",
+            "let's go again :P",
+            "surprise :3",
+            "whoa! is that a button?",
+            "click me if you can!",
+            "I dare you to click me!",
+            "don't stop clicking!",
+            "find the hidden treasure!",
+            "you’re so good at this!",
+            "keep going, you’re almost there!"
+        ];
+
+        let clickCount = 0; // Count the number of clicks
+        const textElements = []; // Store references to currently displayed text elements
+        let videoStarted = false; // Track if the video has started
+
+        button.addEventListener('click', () => {
+            if (!videoStarted) {
+                // Start playing the video on the first click
+                const videoIframe = document.getElementById('videoBackground');
+                videoStarted = true;
+            }
+
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            // Generate random position for the button
+            const randomX = Math.random() * (viewportWidth - button.offsetWidth);
+            const randomY = Math.random() * (viewportHeight - button.offsetHeight);
+
+            // Set new position for the button
+            button.style.left = `${randomX}px`;
+            button.style.top = `${randomY}px`;
+
+            // Generate random text
+            const randomText = texts[Math.floor(Math.random() * texts.length)];
+            const textElement = document.createElement('div');
+            textElement.className = 'random-text';
+            textElement.innerText = randomText;
+
+            // Random position for the text, avoiding overlap with the button, existing texts, and counter
+            let textX, textY;
+            let overlap;
+            do {
+                textX = Math.random() * (viewportWidth - 200); // Adjust width for text
+                textY = Math.random() * (viewportHeight - 30); // Adjust height for text
+
+                // Check overlap with the button
+                overlap = (
+                    textX < randomX + button.offsetWidth && 
+                    textX + 200 > randomX && 
+                    textY < randomY + button.offsetHeight && 
+                    textY + 30 > randomY
+                );
+
+                // Check overlap with existing text elements
+                for (const existingText of textElements) {
+                    const existingX = parseFloat(existingText.style.left);
+                    const existingY = parseFloat(existingText.style.top);
+                    const existingWidth = existingText.offsetWidth;
+                    const existingHeight = existingText.offsetHeight;
+
+                    overlap = overlap || (
+                        textX < existingX + existingWidth && 
+                        textX + 200 > existingX && 
+                        textY < existingY + existingHeight && 
+                        textY + 30 > existingY
+                    );
+                }
+
+                // Check overlap with the click counter
+                const counterX = 10;
+                const counterY = 10;
+                const counterWidth = clickCountDisplay.offsetWidth;
+                const counterHeight = clickCountDisplay.offsetHeight;
+
+                overlap = overlap || (
+                    textX < counterX + counterWidth && 
+                    textX + 200 > counterX && 
+                    textY < counterY + counterHeight && 
+                    textY + 30 > counterY
+                );
+
+            } while (overlap);
+
+            // Set position for the text
+            textElement.style.left = `${textX}px`;
+            textElement.style.top = `${textY}px`;
+
+            // Append the text to the body and track it
+            document.body.appendChild(textElement);
+            textElements.push(textElement); // Add to the array of text elements
+
+            // Remove text after a few seconds
+            setTimeout(() => {
+                textElement.remove();
+                textElements.splice(textElements.indexOf(textElement), 1); // Remove from the array
+            }, 3000);
+
+            // Increment click count and update display
+            clickCount++;
+            clickCountDisplay.innerText = `Clicks: ${clickCount}`; // Update the click count display
+
+            // Show messages at specific counts
+            if (clickCount === 25) {
+                showMessage("𝓌𝑜𝓌, 𝓎𝑜𝓊 𝓇𝑒𝒶𝓁𝓁𝓎 𝒹𝑜 𝓁𝑜𝓋𝑒 𝒸𝓁𝒾𝒸𝒾𝓃𝑔...");
+            } else if (clickCount === 50) {
+                showMessage("𝓷𝓮𝔀 𝓱𝓲𝓰𝓱 𝓼𝓬𝓸𝓻𝓮!");
+            }
+
+            // Change background color every other click
+            if (clickCount % 2 === 0) {
+                document.body.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 80%)`;
+            }
+        });
+
+        function showMessage(msg) {
+            messageDisplay.innerText = msg;
+            messageDisplay.style.display = "block";
+            setTimeout(() => {
+                messageDisplay.style.display = "none"; // Hide the message after 3 seconds
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
