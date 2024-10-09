@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Color Drawing Canvas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            font-family: 'Comfortaa', cursive;
+            background-color: #f4f4f4;
+        }
+
+        #drawingCanvas {
+            background-color: black;
+            flex-grow: 1;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f7f7f7;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .controls button,
+        .controls input {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .controls button:hover {
+            background-color: #ff3b3b;
+        }
+
+        #brushSize {
+            width: 200px;
+        }
+
+        marquee {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        #completedDrawings {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #completedDrawings img {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px;
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .gallery-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .drawing-name {
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .drawing-name input {
+            width: 70%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .favorite-btn {
+            background-color: #ffcc00;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .favorite-btn:hover {
+            background-color: #ffbb00;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <marquee>Draw to reveal colors!</marquee>
+        <div class="controls">
+            <label for="brushSize">Brush Size:</label>
+            <input type="range" id="brushSize" min="1" max="50" value="10">
+            <button id="saveDrawing">Save Drawing</button>
+            <button id="viewDrawings">View Completed Drawings</button>
+            <button id="resetCanvas">Reset Canvas</button>
+        </div>
+    </div>
+    <canvas id="drawingCanvas"></canvas>
+    <div id="completedDrawings">
+        <h2>Completed Drawings <button id="backToMain">Back</button></h2>
+        <div class="gallery-section" id="drawingsContainer"></div>
+        <h2>Favorites</h2>
+        <div class="gallery-section" id="favoritesContainer"></div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            const canvas = $('#drawingCanvas')[0];
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = window.innerWidth - 250; // Adjust for sidebar
+            canvas.height = window.innerHeight;
+
+            let isDrawing = false;
+            let brushSize = 10;
+            const completedDrawings = [];
+
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            $('#drawingCanvas').mousedown(function (event) {
+                isDrawing = true;
+                ctx.beginPath();
+                ctx.moveTo(event.offsetX, event.offsetY);
+            });
+
+            $(document).mouseup(function () {
+                isDrawing = false;
+            });
+
+            $('#drawingCanvas').mousemove(function (event) {
+                if (isDrawing) {
+                    ctx.strokeStyle = getRandomColor();
+                    ctx.lineWidth = brushSize;
+                    ctx.lineTo(event.offsetX, event.offsetY);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(event.offsetX, event.offsetY);
+                }
+            });
+
+            $('#brushSize').on('input', function () {
+                brushSize = $(this).val();
+            });
+
+            $('#saveDrawing').click(function () {
+                const dataURL = canvas.toDataURL();
+                completedDrawings.push({ drawing: dataURL, name: `Drawing ${completedDrawings.length + 1}`, favorite: false });
+                alert('Drawing saved!');
+            });
+
+            $('#viewDrawings').click(function () {
+                $('#completedDrawings').show();
+                $('#drawingsContainer').empty();
+                $('#favoritesContainer').empty();
+
+                completedDrawings.forEach(({ drawing, name, favorite }, index) => {
+                    const favoriteButton = `<button class="favorite-btn" data-index="${index}">${favorite ? 'Unfavorite' : 'Favorite'}</button>`;
+                    $('#drawingsContainer').append(`
+                        <div>
+                            <img src="${drawing}" alt="${name}" />
+                            <div class="drawing-name">
+                                <input type="text" value="${name}" />
+                                ${favoriteButton}
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+
+            $('#resetCanvas').click(function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
+
+            $('#backToMain').click(function () {
+                $('#completedDrawings').hide();
+            });
+
+            // Event delegation for dynamic favorite buttons
+            $(document).on('click', '.favorite-btn', function () {
+                const index = $(this).data('index');
+                completedDrawings[index].favorite = !completedDrawings[index].favorite;
+                $(this).text(completedDrawings[index].favorite ? 'Unfavorite' : 'Favorite');
+                // Update favorites display
+                updateFavorites();
+            });
+
+            function updateFavorites() {
+                $('#favoritesContainer').empty();
+                completedDrawings.forEach(({ drawing, name, favorite }, index) => {
+                    if (favorite) {
+                        $('#favoritesContainer').append(`
+                            <div>
+                                <img src="${drawing}" alt="${name}" />
+                                <div class="drawing-name">
+                                    <input type="text" value="${name}" />
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
