@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2D Mining Game</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      overflow: hidden;
+      background-color: #1a1a1a;
+      font-family: 'Courier New', monospace;
+      color: #f4f4f4;
+    }
+    #sidebar {
+      background-color: #2d2d2d;
+      width: 250px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      transition: transform 0.3s;
+      height: 100vh;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+    #sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+    #gameAreaContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: calc(100% - 250px);
+      height: 100vh;
+      overflow: hidden;
+      padding: 20px;
+      position: relative;
+    }
+    #gameArea {
+      position: relative;
+      width: 900px;
+      height: 600px;
+      background-color: #333;
+      display: grid;
+      grid-template-columns: repeat(45, 20px);
+      grid-template-rows: repeat(30, 20px);
+      border: 3px solid #f4f4f4;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+    .cell {
+      width: 20px;
+      height: 20px;
+      background-color: #555;
+      transition: background-color 0.3s, opacity 0.3s;
+    }
+    .visible {
+      opacity: 1;
+    }
+    .stone {
+      background-color: #888;
+    }
+    .player {
+      background-color: #f4f4f4;
+      border-radius: 50%;
+      box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.3);
+    }
+    #instructions {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: #ffdd57;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+    }
+    #instructions marquee {
+      color: #ffdd57;
+      animation: marquee 10s linear infinite; /* Increased speed */
+    }
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .level-banner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      font-family: 'Cursive', sans-serif;
+      color: #ffdd57;
+      opacity: 0;
+      animation: fadeInOut 2s ease-in-out forwards;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    #toggleSidebar {
+      cursor: pointer;
+      color: #f4f4f4;
+      background: none;
+      border: none;
+      margin-top: 10px;
+      font-size: 1.2rem;
+      transition: color 0.3s;
+    }
+    #toggleSidebar:hover {
+      color: #ffdd57;
+    }
+    #nextLevelButton {
+      display: none;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #f4f4f4;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s;
+    }
+    #nextLevelButton:hover {
+      background-color: #45a049;
+    }
+    #levelList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      width: 100%;
+    }
+    .level-item {
+      font-size: 1.2rem;
+      margin: 5px 0;
+      transition: transform 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .level-item:hover {
+      transform: scale(1.1);
+      color: #ffdd57;
+    }
+    #footer {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 1rem;
+      color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Levels</h2>
+  <ul id="levelList">
+    <li class="level-item" id="level1">Level 1 🗝</li>
+    <li class="level-item" id="level2">Level 2 🔒</li>
+    <li class="level-item" id="level3">Level 3 🔒</li>
+    <li class="level-item" id="level4">Level 4 🔒</li>
+    <li class="level-item" id="level5">Level 5 🔒</li>
+    <li class="level-item" id="level6">Level 6 🔒</li>
+    <li class="level-item" id="level7">Level 7 🔒</li>
+    <li class="level-item" id="level8">Level 8 🔒</li>
+    <li class="level-item" id="level9">Level 9 🔒</li>
+    <li class="level-item" id="level10">Level 10 🔒</li>
+  </ul>
+  <button id="toggleSidebar">Close</button>
+</div>
+
+<div id="gameAreaContainer">
+  <div id="instructions">
+    <marquee behavior="scroll" direction="left">𝔲𝔰𝔢 𝔴𝔞𝔰𝔡 𝔱𝔬 𝔪𝔞𝔨𝔢 𝔶𝔬𝔲𝔯 𝔴𝔞𝔶 𝔱𝔥𝔯𝔬𝔲𝔤𝔥 𝔱𝔥𝔢 𝔪𝔞𝔷𝔢...</marquee>
+  </div>
+  <div id="gameArea"></div>
+  <div id="levelBanner" class="level-banner">𝔩𝔢𝔳𝔢𝔩 1</div>
+  <button id="nextLevelButton" onclick="startNextLevel()">Next Level</button>
+  <div id="footer">
+    <div>𝔴𝔴𝔴.𝔥𝔞𝔯𝔡𝔢𝔰𝔱𝔪𝔞𝔷𝔢.𝔠𝔬𝔪</div>
+    <div>𝔪𝔞𝔷𝔢𝔡𝔤𝔞𝔪𝔢𝔰©</div>
+  </div>
+</div>
+
+<script>
+  const gameArea = document.getElementById("gameArea");
+  const levelBanner = document.getElementById("levelBanner");
+  const sidebar = document.getElementById("sidebar");
+  const toggleSidebar = document.getElementById("toggleSidebar");
+  const nextLevelButton = document.getElementById("nextLevelButton");
+  const levelList = document.getElementById("levelList");
+
+  let rows = 30;
+  let cols = 45;
+  let mineGrid = [];
+  let playerPos = { x: 0, y: Math.floor(rows / 2) };
+  let level = 1;
+  let startTime;
+  let bestTime = Array(10).fill(Infinity);
+
+  // Toggle Sidebar
+  toggleSidebar.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    toggleSidebar.textContent = sidebar.classList.contains("collapsed") ? "Open" : "Close";
+  });
+
+  // Create a solvable maze for each level
+  function createSolvableMaze() {
+    gameArea.innerHTML = ""; // Clear previous grid
+    mineGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+    // Simple maze generation algorithm (randomized DFS)
+    function generateMaze(x, y) {
+      const directions = [
+        { dx: 2, dy: 0 }, { dx: -2, dy: 0 },
+        { dx: 0, dy: 2 }, { dx: 0, dy: -2 }
+      ];
+      directions.sort(() => Math.random() - 0.5); // Shuffle directions
+
+      for (const { dx, dy } of directions) {
+        const nx = x + dx, ny = y + dy;
+        if (nx >= 0 && ny >= 0 && nx < cols && ny < rows && mineGrid[ny][nx] === 0) {
+          mineGrid[y + dy / 2][x + dx / 2] = 1; // Create a path
+          mineGrid[ny][nx] = 1; // Mark as visited
+          generateMaze(nx, ny);
+        }
+      }
+    }
+    mineGrid[0][0] = 1; // Start point
+    generateMaze(0, 0);
+
+    // Populate game area with cells
+    mineGrid.forEach((row, r) => {
+      row.forEach((cell, c) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.className = "cell" + (cell ? " visible" : "");
+        gameArea.appendChild(cellDiv);
+      });
+    });
+  }
+
+  // Draw player
+  function drawPlayer() {
+    const playerIndex = playerPos.y * cols + playerPos.x;
+    const playerCell = gameArea.children[playerIndex];
+    playerCell.classList.add("player");
+  }
+
+  // Start the game
+  function startGame() {
+    createSolvableMaze();
+    drawPlayer();
+    levelBanner.textContent = `𝔩𝔢𝔳𝔢𝔩 ${level}`;
+    levelBanner.style.opacity = 1;
+    setTimeout(() => {
+      levelBanner.style.opacity = 0;
+    }, 2000);
+    startTime = Date.now();
+  }
+
+  // Move player
+  function movePlayer(dx, dy) {
+    const newX = playerPos.x + dx;
+    const newY = playerPos.y + dy;
+
+    if (newX >= 0 && newY >= 0 && newX < cols && newY < rows && mineGrid[newY][newX] === 1) {
+      // Clear previous player position
+      const prevIndex = playerPos.y * cols + playerPos.x;
+      const prevCell = gameArea.children[prevIndex];
+      prevCell.classList.remove("player");
+
+      // Update player position
+      playerPos.x = newX;
+      playerPos.y = newY;
+
+      drawPlayer();
+
+      // Check if player reached the end
+      if (playerPos.x === cols - 1 && playerPos.y === rows - 1) {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        if (elapsedTime < bestTime[level - 1]) {
+          bestTime[level - 1] = elapsedTime;
+        }
+        nextLevelButton.style.display = "block";
+      }
+    }
+  }
+
+  // Start next level
+  function startNextLevel() {
+    level++;
+    playerPos = { x: 0, y: Math.floor(rows / 2) };
+    nextLevelButton.style.display = "none";
+    startGame();
+  }
+
+  // Key controls
+  document.addEventListener("keydown", (event) => {
+    switch (event.key) {
+      case "w":
+        movePlayer(0, -1);
+        break;
+      case "s":
+        movePlayer(0, 1);
+        break;
+      case "a":
+        movePlayer(-1, 0);
+        break;
+      case "d":
+        movePlayer(1, 0);
+        break;
+    }
+  });
+
+  // Initialize the game
+  startGame();
+
+  // Load levels
+  levelList.querySelectorAll('.level-item').forEach((item, index) => {
+    item.addEventListener('click', () => {
+      level = index + 1;
+      playerPos = { x: 0, y: Math.floor(rows / 2) };
+      nextLevelButton.style.display = "none";
+      startGame();
+    });
+  });
+
+</script>
+</body>
+</html>
